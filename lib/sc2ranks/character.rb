@@ -2,24 +2,20 @@ require 'sc2ranks/team'
 require 'sc2ranks/portrait'
 
 class Sc2ranks
-  class Character < Struct.new(:name, :bnet_url, :bnet_id, :id, :region, :updated_at, :achievement_points, :character_code, :portrait, :teams)
-    def initialize(url, data)
-      self.bnet_url = url
+  class Character 
+    attr_accessor :name, :bnet_url, :bnet_id, :id, :region, :updated_at, :achievement_points, :character_code, :portrait, :teams
 
-      (members - ['bnet_url']).each do |member|
-        case member
-        when 'portrait'
-          self.portrait = Portrait.new(data[member])
-        when 'teams'
-          self.teams = []
-
-          data['teams'].each do |team|
-            self.teams << Team.new(team)
-          end
-        else
-          self[member] = data[member]
-        end
-      end
+    def initialize(params = {})
+      @name               = params[:name] 
+      @bnet_url           = params[:bnet_url]
+      @bnet_id            = params[:bnet_id]
+      @id                 = params[:id]
+      @region             = params[:region]
+      @updated_at         = params[:updated_at]
+      @achievement_points = params[:achievement_points]
+      @character_code     = params[:character_code]
+      @portrait           = Portrait.new(params[:portrait])
+      @teams              = params[:teams].map{|team| Team.new(team.symbolize_keys!)} if params[:teams]
     end
 
     # Look up a team via bracket number and is_random setting. If you are trying
@@ -37,5 +33,6 @@ class Sc2ranks
         end
       end
     end
+    
   end
 end

@@ -16,9 +16,8 @@ class Sc2ranks
   def character(url)
     region, char = parse_bnet_url url
 
-    data = self.class.get("/api/base/teams/#{region}/#{char}.xml")
-
-    Character.new url, data['hash']
+    data = self.class.get("/api/base/teams/#{region}/#{char}.xml").symbolize_keys!
+    Character.new data[:hash].symbolize_keys!
   end
 
   def parse_bnet_url(url)
